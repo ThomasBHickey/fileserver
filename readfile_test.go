@@ -3,14 +3,12 @@ package fileserver
 import (
 	//"errors"
 	"bytes"
-	"fmt"
-	"os"
+	//"fmt"
+	//"os"
 	"testing"
 )
 
 func TestReadFile(t *testing.T) {
-	wd, _ := os.Getwd()
-	fmt.Println("TestReadFile ", wd)
 	page, err := readFile("fileserver/readfile_test.go")
 	if err != nil {
 		t.FailNow()
@@ -19,6 +17,10 @@ func TestReadFile(t *testing.T) {
 		t.Fail()
 	}
 	page, err = readFile("test.xsl")
+	if err != nil {
+		t.Fail()
+	}
+	page, err = readFile("github.com/ThomasBHickey/fileserver/readfile_test.go")
 	if err != nil {
 		t.Fail()
 	}
