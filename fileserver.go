@@ -25,11 +25,12 @@ var whereToLook = map[string][]string{
 	".go": {"./",
 		baseDir,
 		baseDir + "github.com/",
-		baseDir + "github.com/ThomasBHickey/"},
-	".js":  {"./script/"},
-	".xsl": {"./xsl/"},
-	".png": {"./image/"},
-	".gif": {"./image/"},
+			baseDir + "github.com/ThomasBHickey/"},
+	".html": {fsPath+"./html/"},
+	".js":  {fsPath+"./script/"},
+	".xsl": {fsPath+"./xsl/"},
+	".png": {fsPath+"./image/"},
+	".gif": {fsPath+"./image/"},
 	".ico": {fsPath+"image/"},
 }
 
@@ -76,5 +77,5 @@ func handler(w http.ResponseWriter, r *http.Request) {
 func Server() {
 	fmt.Println("Server called")
 	http.HandleFunc("/", handler)
-	http.ListenAndServe(":8085", nil)
+	http.ListenAndServe(":8082", nil)
 }
