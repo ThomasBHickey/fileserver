@@ -14,16 +14,8 @@
 
   <xsl:template name="editHead">
 	<head>
-		<title>ACE in Action</title>
-		<!--style type="text/css" media="screen">
-    #editor { 
-        position: absolute;
-        top: 0;
-        right: 0;
-        bottom: 0;
-        left: 0;
-    }
-		</style-->
+		<title><xsl:value-of select="/edit/fileName"/></title>
+
 <style type="text/css" media="screen">
     textarea {
         display: block;
@@ -34,7 +26,7 @@
     #editor {
         display: block;
         margin: auto;
-        width: 600px;
+        width: 800px;
         height: 300px;
         border: 1px solid #888;
     }
@@ -50,19 +42,15 @@
   <xsl:template name="editBody">
 	<body>
 	<div id="editor"><xsl:value-of select="/edit/contents"/></div>
-	<xform action="/edit" name="myform" method="POST">
-	<!--input type="submit" value="Save" /-->
 	<button onclick="saveFile()">Save</button>
     <script>
     var editor = ace.edit("editor");
     editor.setTheme("ace/theme/monokai");
     editor.getSession().setMode("ace/mode/golang");
-	function saveFile(){alert("Saving File");
-		$.post("/savingfile", "DATA GOES HERE")
+	function saveFile(){
+		$.post("<xsl:value-of select='/edit/fileName'/>", editor.getSession().getValue())
 	}
-	
 	</script>
-	</xform>
 </body>
 </xsl:template>
 </xsl:stylesheet>

@@ -94,11 +94,15 @@ func (p *Page) writeEditor(w http.ResponseWriter) error {
 	return err
 }
 
+func saveFile(r *http.Request){
+	fmt.Println("saveFile '", r.URL.Path, "'")
+}
+
 func handler(w http.ResponseWriter, r *http.Request) {
 	fmt.Println("handler:", r.URL.Path[1:], r.Method)
 	if r.Method == "POST" {
 		fmt.Println("File needs to be saved")
-		return
+		saveFile(r)
 	}
 	page, err := readFile(r.URL.Path[1:])
 	if err != nil {
