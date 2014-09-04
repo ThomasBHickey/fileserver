@@ -15,7 +15,7 @@
   <xsl:template name="editHead">
 	<head>
 		<title>ACE in Action</title>
-		<style type="text/css" media="screen">
+		<!--style type="text/css" media="screen">
     #editor { 
         position: absolute;
         top: 0;
@@ -23,21 +23,46 @@
         bottom: 0;
         left: 0;
     }
-		</style>
-		<script src="ace-builds/src-min-noconflict/ace.js" type="text/javascript" charset="utf-8"></script>	</head>
+		</style-->
+<style type="text/css" media="screen">
+    textarea {
+        display: block;
+        margin: auto;
+        width: 600px;
+        height: 5px;
+    }
+    #editor {
+        display: block;
+        margin: auto;
+        width: 600px;
+        height: 300px;
+        border: 1px solid #888;
+    }
+    form {
+        text-align: center;
+    }
+</style>
+	<script src="ace-builds/src-min-noconflict/ace.js" type="text/javascript" charset="utf-8"></script>
+	<script src="jquery-2.1.1.min.js" type="text/javascript" charset="utf-8"></script>
+	</head>
   </xsl:template>
 
   <xsl:template name="editBody">
-	<xsl:variable name="content"><xsl:value-of select="//content"/></xsl:variable>
 	<body>
-	<div id="editor"><xsl:value-of select="$content"/></div>
-    
-
-<script>
+	<div id="editor"><xsl:value-of select="/edit/contents"/></div>
+	<xform action="/edit" name="myform" method="POST">
+	<!--input type="submit" value="Save" /-->
+	<button onclick="saveFile()">Save</button>
+    <script>
     var editor = ace.edit("editor");
     editor.setTheme("ace/theme/monokai");
-    editor.getSession().setMode("ace/mode/javascript");
-</script>
+    editor.getSession().setMode("ace/mode/golang");
+	function saveFile(){alert("Saving File");
+		$.post("/savingfile", "DATA GOES HERE")
+	}
+	
+	</script>
+	</xform>
 </body>
 </xsl:template>
 </xsl:stylesheet>

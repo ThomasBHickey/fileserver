@@ -95,13 +95,17 @@ func (p *Page) writeEditor(w http.ResponseWriter) error {
 }
 
 func handler(w http.ResponseWriter, r *http.Request) {
-	fmt.Println("handler:", r.URL.Path[1:])
+	fmt.Println("handler:", r.URL.Path[1:], r.Method)
+	if r.Method == "POST" {
+		fmt.Println("File needs to be saved")
+		return
+	}
 	page, err := readFile(r.URL.Path[1:])
 	if err != nil {
 		fmt.Println("Unable to read ", r.URL.Path[1:], err)
 		return
 	}
-	if strings.HasSuffix(page.FileName, ".gone") {
+	if strings.HasSuffix(page.FileName, ".go") {
 		page.writeEditor(w)
 	} else {
 		w.Write(page.Contents)
