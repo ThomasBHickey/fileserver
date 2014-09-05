@@ -3,6 +3,7 @@
 package fileserver
 
 import (
+	"bytes"
 	"encoding/xml"
 	"fmt"
 	"io/ioutil"
@@ -17,13 +18,14 @@ type Page struct {
 }
 
 const (
-	baseDir = "C:/Thom/go/src/"
+	//baseDir = "C:/Thom/go/src/"
+	baseDir = "./" // run me in 'src'!
 	fsPath  = baseDir + "github.com/ThomasBHickey/fileserver/"
 )
 
 var whereToLook = map[string][]string{
 	".css": {"./css/"},
-	".go": {"./",
+	".go": { //"./",
 		baseDir,
 		baseDir + "github.com/",
 		baseDir + "github.com/ThomasBHickey/"},
@@ -39,7 +41,7 @@ var whereToLook = map[string][]string{
 func readFile(fname string) (*Page, error) {
 	//fmt.Println("readFile looking for ", fname)
 	for suffix, list := range whereToLook {
-		fmt.Println("checking for suffix ", suffix)
+		//fmt.Println("checking for suffix ", suffix)
 		if strings.HasSuffix(fname, suffix) {
 			for _, prefix := range list {
 				xfname := prefix + fname
@@ -69,7 +71,7 @@ func (p *Page) writeFile() error {
 func (p *Page) writeEditor(w http.ResponseWriter) error {
 	fmt.Println("writeEditor", p.FileName)
 	_, err := w.Write([]byte(`<?xml version='1.0' encoding='utf-8'?>
-<?xml-stylesheet type='text/xsl' href='editor.xsl'?>
+<?xml-stylesheet type='text/xsl' href='/editor.xsl'?>
 `))
 	if err != nil {
 		return err
@@ -94,8 +96,16 @@ func (p *Page) writeEditor(w http.ResponseWriter) error {
 	return err
 }
 
-func saveFile(r *http.Request){
+func saveFile(r *http.Request) {
 	fmt.Println("saveFile '", r.URL.Path, "'")
+	body := new(bytes.Buffer)
+	body.ReadFrom(r.Body)
+	fmt.Println("contents ", body)
+	p := &Page{FileName: r.URL.Path[1:], Contents: body.Bytes()}
+	err := p.writeFile()
+	if err!=nil{
+		fmt.Println("error writing file", p.FileName)
+		}
 }
 
 func handler(w http.ResponseWriter, r *http.Request) {

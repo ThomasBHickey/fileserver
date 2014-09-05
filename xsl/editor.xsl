@@ -34,8 +34,8 @@
         text-align: center;
     }
 </style>
-	<script src="ace-builds/src-min-noconflict/ace.js" type="text/javascript" charset="utf-8"></script>
-	<script src="jquery-2.1.1.min.js" type="text/javascript" charset="utf-8"></script>
+	<script src="/ace-builds/src-min-noconflict/ace.js" type="text/javascript" charset="utf-8"></script>
+	<script src="/jquery-2.1.1.min.js" type="text/javascript" charset="utf-8"></script>
 	</head>
   </xsl:template>
 
@@ -48,7 +48,7 @@
     editor.setTheme("ace/theme/monokai");
     editor.getSession().setMode("ace/mode/golang");
 	function saveFile(){
-		$.post("<xsl:value-of select='/edit/fileName'/>", editor.getSession().getValue())
+		$.post("/"+"<xsl:value-of select='/edit/fileName'/>", editor.getSession().getValue())
 	}
 	</script>
 </body>
