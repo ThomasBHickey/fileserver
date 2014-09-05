@@ -8,7 +8,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"net/http"
-	//"path/filepath"
+	"net/url"
 	"strings"
 )
 
@@ -32,7 +32,9 @@ var whereToLook = map[string][]string{
 	".gone": {"./"},
 	".html": {fsPath + "./html/"},
 	".js":   {fsPath + "./script/"},
-	".xsl":  {fsPath + "./xsl/"},
+	".xsl":  {fsPath + "./xsl/",
+	    baseDir + "github.com/",
+	    baseDir + "github.com/ThomasBHickey/"},
 	".png":  {fsPath + "./image/"},
 	".gif":  {fsPath + "./image/"},
 	".ico":  {fsPath + "image/"},
@@ -69,7 +71,7 @@ func (p *Page) writeFile() error {
 }
 
 func (p *Page) writeEditor(w http.ResponseWriter) error {
-	fmt.Println("writeEditor", p.FileName)
+	fmt.Println("writeEditor '", p.FileName, "'")
 	_, err := w.Write([]byte(`<?xml version='1.0' encoding='utf-8'?>
 <?xml-stylesheet type='text/xsl' href='/editor.xsl'?>
 `))
@@ -100,7 +102,7 @@ func saveFile(r *http.Request) {
 	fmt.Println("saveFile '", r.URL.Path, "'")
 	body := new(bytes.Buffer)
 	body.ReadFrom(r.Body)
-	fmt.Println("contents ", body)
+	//fmt.Println("contents ", body)
 	p := &Page{FileName: r.URL.Path[1:], Contents: body.Bytes()}
 	err := p.writeFile()
 	if err!=nil{
@@ -109,7 +111,7 @@ func saveFile(r *http.Request) {
 }
 
 func handler(w http.ResponseWriter, r *http.Request) {
-	fmt.Println("handler:", r.URL.Path[1:], r.Method)
+	fmt.Println("handler:", r.URL.Path, r.Method)
 	if r.Method == "POST" {
 		fmt.Println("File needs to be saved")
 		saveFile(r)
@@ -119,7 +121,15 @@ func handler(w http.ResponseWriter, r *http.Request) {
 		fmt.Println("Unable to read ", r.URL.Path[1:], err)
 		return
 	}
-	if strings.HasSuffix(page.FileName, ".go") {
+	u, err := url.Parse(r.URL.String())
+	if err!=nil{
+	    fmt.Println("Unable to parse URL", err)
+	    return
+	}
+	fmt.Println("u.Query():", u.Query())
+	_, doEdit := u.Query()["edit"]
+	fmt.Println("doEdit", doEdit)
+	if doEdit {
 		page.writeEditor(w)
 	} else {
 		w.Write(page.Contents)

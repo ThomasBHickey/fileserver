@@ -13,8 +13,10 @@
   </xsl:template>
 
   <xsl:template name="editHead">
+	<xsl:variable name="fn" select="/edit/fileName"/>
+	<xsl:variable name="tfn" select="substring($fn, string-length($fn)-14)"/>
 	<head>
-		<title><xsl:value-of select="/edit/fileName"/></title>
+		<title><xsl:value-of select="$tfn"/></title>
 
 <style type="text/css" media="screen">
     textarea {
@@ -26,8 +28,8 @@
     #editor {
         display: block;
         margin: auto;
-        width: 800px;
-        height: 300px;
+        width: 750px;
+        height: 800px;
         border: 1px solid #888;
     }
     form {
