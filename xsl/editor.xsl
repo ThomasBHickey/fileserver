@@ -47,7 +47,7 @@
 	<button onclick="saveFile()">Save</button>
     <script>
     var editor = ace.edit("editor");
-    editor.setTheme("ace/theme/monokai");
+    editor.setTheme("ace/theme/Chrome");
     editor.getSession().setMode("ace/mode/golang");
 	function saveFile(){
 		$.post("/"+"<xsl:value-of select='/edit/fileName'/>", editor.getSession().getValue())

@@ -7,8 +7,10 @@ import (
 	"encoding/xml"
 	"fmt"
 	"io/ioutil"
+	"net"
 	"net/http"
 	"net/url"
+	"os"
 	"strings"
 )
 
@@ -29,15 +31,14 @@ var whereToLook = map[string][]string{
 		baseDir,
 		baseDir + "github.com/",
 		baseDir + "github.com/ThomasBHickey/"},
-	".gone": {"./"},
 	".html": {fsPath + "./html/"},
 	".js":   {fsPath + "./script/"},
-	".xsl":  {fsPath + "./xsl/",
-	    baseDir + "github.com/",
-	    baseDir + "github.com/ThomasBHickey/"},
-	".png":  {fsPath + "./image/"},
-	".gif":  {fsPath + "./image/"},
-	".ico":  {fsPath + "image/"},
+	".xsl": {fsPath + "./xsl/",
+		baseDir + "github.com/",
+		baseDir + "github.com/ThomasBHickey/"},
+	".png": {fsPath + "./image/"},
+	".gif": {fsPath + "./image/"},
+	".ico": {fsPath + "image/"},
 }
 
 func readFile(fname string) (*Page, error) {
@@ -99,15 +100,15 @@ func (p *Page) writeEditor(w http.ResponseWriter) error {
 }
 
 func saveFile(r *http.Request) {
-	fmt.Println("saveFile '", r.URL.Path, "'")
+	//fmt.Println("saveFile '", r.URL.Path, "'")
 	body := new(bytes.Buffer)
 	body.ReadFrom(r.Body)
 	//fmt.Println("contents ", body)
 	p := &Page{FileName: r.URL.Path[1:], Contents: body.Bytes()}
 	err := p.writeFile()
-	if err!=nil{
+	if err != nil {
 		fmt.Println("error writing file", p.FileName)
-		}
+	}
 }
 
 func handler(w http.ResponseWriter, r *http.Request) {
@@ -122,13 +123,13 @@ func handler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	u, err := url.Parse(r.URL.String())
-	if err!=nil{
-	    fmt.Println("Unable to parse URL", err)
-	    return
+	if err != nil {
+		fmt.Println("Unable to parse URL", err)
+		return
 	}
-	fmt.Println("u.Query():", u.Query())
+	//fmt.Println("u.Query():", u.Query())
 	_, doEdit := u.Query()["edit"]
-	fmt.Println("doEdit", doEdit)
+	//fmt.Println("doEdit", doEdit)
 	if doEdit {
 		page.writeEditor(w)
 	} else {
@@ -137,8 +138,21 @@ func handler(w http.ResponseWriter, r *http.Request) {
 	//fmt.Fprintf(w, "Hi there, I love %s!", r.URL.Path[1:])
 }
 
+func ipAddress() {
+	name, err := os.Hostname()
+	if err == nil {
+		addrs, err := net.LookupHost(name)
+		if err == nil {
+			for _, a := range addrs {
+				fmt.Println(a)
+			}
+		}
+	}
+}
+
 func Server() {
 	fmt.Println("Server called")
+	ipAddress()
 	http.HandleFunc("/", handler)
 	http.ListenAndServe(":8080", nil)
 }
